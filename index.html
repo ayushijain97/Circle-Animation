@@ -26,7 +26,7 @@
         .item_orange {
             transition: .3s ease-out;
             background: linear-gradient(to right, #fe5622, #fe5622) no-repeat;
-            background-size: 30px;
+            background-size: 0;
         }
         
         .item_yellow {
@@ -35,7 +35,7 @@
             margin-top: 100px;
             transition: .3s ease-out;
             background: linear-gradient( to right, #feee59, #feee59) no-repeat;
-            background-size: 30px;
+            background-size: 0;
         }
         
         .item_green {
@@ -44,7 +44,7 @@
             transform: rotateZ(270deg);
             transition: .3s ease-out;
             background: linear-gradient(to left, #2e7d32, #2e7d32) no-repeat;
-            background-size: 30px;
+            background-size: 0;
             float: left;
         }
         
@@ -53,7 +53,7 @@
             transition: .3s ease-out;
             transform: rotateZ(180deg);
             background: linear-gradient(to left, #2db5f6, #2db5f6) no-repeat;
-            background-size: 30px;
+            background-size: 0;
         }
         
         .btn {
@@ -66,18 +66,49 @@
             color: white;
             background-color: #027e81;
         }
+        
+        .inner-div {
+            width: 70px;
+            height: 70px;
+            border-radius: 50px;
+            z-index: 999;
+        }
+        
+        .orange-div {
+            background-color: #fe5622;
+        }
+        
+        .yellow-div {
+            background-color: #feee59;
+        }
+        
+        .green-div {
+            background-color: #2e7d32;
+        }
+        
+        .blue-div {
+            background-color: #2db5f6;
+        }
     </style>
 </head>
 
 <body>
     <div class="container">
         <div class="container__item1">
-            <div class="items item_orange "></div>
-            <div class="items item_yellow "></div>
+            <div class="items item_orange ">
+                <div class="inner-div orange-div"></div>
+            </div>
+            <div class="items item_yellow ">
+                <div class="inner-div yellow-div"></div>
+            </div>
         </div>
         <div class="container__item2">
-            <div class="items item_blue"></div>
-            <div class="items item_green"></div>
+            <div class="items item_blue">
+                <div class="inner-div blue-div"></div>
+            </div>
+            <div class="items item_green">
+                <div class="inner-div green-div"></div>
+            </div>
         </div>
         <div>
             <button class="btn btn_start ">start</button>
@@ -88,51 +119,74 @@
 
 <script>
     let orangeInterval, yellowInterval, blueInterval, greenInterval;
-    let orange, yellow, green, blue;
+    let orangeOuterDiv, yellowOuterDiv, greenOuterDiv, blueOuterDiv;
+    let orangeInnerDiv, yellowInnerDiv, greenInnerDiv, blueInnerDiv;
+
     const background = ['linear-gradient(to right, #fe5622, #fe5622) no-repeat',
         'linear-gradient( to right, #feee59, #feee59) no-repeat',
         'linear-gradient(to left, #2e7d32, #2e7d32) no-repeat',
         'linear-gradient(to left, #2db5f6, #2db5f6) no-repeat'
     ]
+    const backgroundColor = ['#fe5622',
+        '#feee59',
+        '#2e7d32',
+        '#2db5f6',
+    ]
+
     document.querySelector(".btn_start").addEventListener("click", function() {
-        orange = document.querySelector('.item_orange');
-        yellow = document.querySelector('.item_yellow');
-        green = document.querySelector('.item_green');
-        blue = document.querySelector('.item_blue');
-        orangeInterval = moveBackAndForth(orange, 0);
-        yellowInterval = moveBackAndForth(yellow, 1);
-        greenInterval = moveBackAndForth(green, 2);
-        blueInterval = moveBackAndForth(blue, 3);
+
+        // Outer [Animated Div]
+        orangeOuterDiv = document.querySelector('.item_orange');
+        yellowOuterDiv = document.querySelector('.item_yellow');
+        greenOuterDiv = document.querySelector('.item_green');
+        blueOuterDiv = document.querySelector('.item_blue');
+
+        // Inner [Container Div]
+        orangeInnerDiv = document.querySelector('.orange-div');
+        yellowInnerDiv = document.querySelector('.yellow-div');
+        greenInnerDiv = document.querySelector('.green-div');
+        blueInnerDiv = document.querySelector('.blue-div');
+
+        orangeInterval = moveBackAndForth(orangeOuterDiv, orangeInnerDiv, 0);
+        yellowInterval = moveBackAndForth(yellowOuterDiv, yellowInnerDiv, 1);
+        greenInterval = moveBackAndForth(greenOuterDiv, greenInnerDiv, 2);
+        blueInterval = moveBackAndForth(blueOuterDiv, blueInnerDiv, 3);
     })
     document.querySelector(".btn_stop").addEventListener("click", function() {
         clearInterval(orangeInterval);
         clearInterval(yellowInterval);
         clearInterval(greenInterval);
         clearInterval(blueInterval);
-        reset(orange);
-        reset(yellow);
-        reset(green);
-        reset(blue);
+        reset(orangeOuterDiv);
+        reset(yellowOuterDiv);
+        reset(greenOuterDiv);
+        reset(blueOuterDiv);
     });
 
     const reset = (elem) => {
         elem.style.backgroundSize = 10 + '%';
     }
 
-    const moveBackAndForth = (elem, backgroundIndex) => {
-        let position = 0;
+    const moveBackAndForth = (outerDiv, innerDiv, backgroundIndex) => {
+        let position = 5;
         let increasing = true;
         let interval = window.setInterval(() => {
             if (position === 120) {
                 increasing = false;
             }
-            if (position === 0) {
+            if (position <= 5) {
                 increasing = true;
-                elem.style.background = background[backgroundIndex];
+                innerDiv.style.background = backgroundColor[backgroundIndex];
+                outerDiv.style.background = background[backgroundIndex];
                 backgroundIndex = (backgroundIndex + 1) % background.length;
             }
-            position = increasing ? ++position : --position;
-            elem.style.backgroundSize = position + '%';
+            if (!increasing && position <= 6) {
+                outerDiv.style.background = 'transparent';
+                position = 5;
+            } else {
+                position = increasing ? ++position : --position;
+                outerDiv.style.backgroundSize = position + '%';
+            }
         }, 10);
         return interval;
     }
