@@ -127,7 +127,10 @@
         '#2db5f6'
     ];
     document.querySelector(".btn_start").addEventListener("click", function() {
-
+        // Just in case if the animation was already on
+        if (orangeInterval || yellowInterval || greenInterval || blueInterval) {
+            resetGame();
+        }
         // Outer [Animated Div]
         orangeOuterDiv = document.querySelector('.item_orange');
         yellowOuterDiv = document.querySelector('.item_yellow');
@@ -141,6 +144,15 @@
     });
 
     document.querySelector(".btn_stop").addEventListener("click", function() {
+        resetGame();
+    });
+
+    const reset = (elem) => {
+        elem.style.width = '70px';
+        elem.style.height = '70px';
+    }
+
+    const resetGame = () => {
         clearInterval(orangeInterval);
         clearInterval(yellowInterval);
         clearInterval(greenInterval);
@@ -149,11 +161,6 @@
         reset(yellowOuterDiv);
         reset(greenOuterDiv);
         reset(blueOuterDiv);
-    });
-
-    const reset = (elem) => {
-        elem.style.width = '70px';
-        elem.style.height = '70px';
     }
 
     const moveBackAndForth = (outerDiv, backgroundIndex, index) => {
